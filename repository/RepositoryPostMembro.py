@@ -5,7 +5,7 @@ from model.ModelMembro import membro
 from service.ServiceSearchEndereco import viacep
 
 url = ""
-jwt_token = ""
+jwt_token = " "
 
 def post_usuario(usuario: membro):
     headers = {

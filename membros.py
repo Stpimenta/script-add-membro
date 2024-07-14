@@ -17,12 +17,15 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
 # Escolha dos índices das linhas para processar
-inicio = 1 - 1  
-fim = 8    
+inicio = 50 - 1  
+fim = 51
 
 # Inicializa vetores para armazenar nomes de usuários com sucesso e sem sucesso
 sucesso = []
 falha = []
+
+# Lista para armazenar usuários que devem ser tentados novamente
+tentar_novamente = []
 
 # Itera sobre as linhas selecionadas do DataFrame
 for index in range(inicio, fim):
@@ -34,10 +37,13 @@ for index in range(inicio, fim):
 
     batismoData, batismoIgreja = ServiceTratamento.extrair_informacoesBatismo(row[16])
 
+    if batismoIgreja is not None:
+        batismoIgreja = batismoIgreja.lower()
+
     usuario = membro(
         nome=ServiceTratamento.capitalize_name(row[3]),
         email=ServiceTratamento.gmail_verify(row[15]),
-        senha=f'{ServiceTratamento.cpf_verify(row[9])}@',
+        senha=f'{ServiceTratamento.cpf_verify(row[10])}@',
         data_nascimento=ServiceTratamento.converte_data(row[5]),
         cpf=ServiceTratamento.cpf_verify(row[10]),
         rg_numero=ServiceTratamento.rg_verify(row[9]),
@@ -55,8 +61,8 @@ for index in range(inicio, fim):
         telefone_numero=ServiceTratamento.tel_verify(row[14]),
         data_batismo=None,
         pastor_batismo=ServiceTratamento.pastor_batismo_verify(row[17]),
-        igreja_batismo=batismoIgreja.lower(),
-        profissao=row[8].lower(),
+        igreja_batismo=batismoIgreja,
+        profissao=ServiceTratamento.profi_verify(row[8]),
         estado_civil=row[6].lower(),
         status=ServiceTratamento.status_verify(row[1]),
         genero=int(row[0]),
@@ -71,8 +77,18 @@ for index in range(inicio, fim):
         sucesso.append(usuario.Nome)  # Adiciona o nome do usuário ao vetor de sucesso
         print(f'Request for {usuario.Nome} succeeded with status code {status_code}')
     else:
+        tentar_novamente.append(usuario)  # Adiciona o usuário à lista de tentativa novamente
+
+# Tenta cadastrar os usuários que falharam novamente
+for usuario in tentar_novamente:
+    status_code, response_json = post_usuario(usuario)
+
+    if status_code == 200:
+        sucesso.append(usuario.Nome)  # Adiciona o nome do usuário ao vetor de sucesso
+        print(f'Retry request for {usuario.Nome} succeeded with status code {status_code}')
+    else:
         falha.append(usuario.Nome)  # Adiciona o nome do usuário ao vetor de falha
-        print(f'Request for {usuario.Nome} failed with status code {status_code}')
+        print(f'Retry request for {usuario.Nome} failed with status code {status_code}')
 
 # Após o loop, imprime os vetores de sucesso e falha
 print(f'Usuários que deram certo: {sucesso}')
@@ -115,3 +131,8 @@ print(f'Usuários que não deram certo: {falha}')
 #     print(f'Response JSON: {response_json}')
 # else:
 #     print(f'Request failed with status code: {status_code}')
+
+
+
+# Usuários que não deram certo: ['Regina Celano Oias', 'Jose Delfino da Silva', 'Neuza Pereira da Silva', 'Alexandre Gomes', 'Marta Pereira Dos Santos Gomes', 'Larissa Gabriela Pimenta Rodrigues', 'Ivo de Lima Alves', '
+#                                Murilo Marques S. Guimarães Gonçalves', 'Elivelton de Oliveira Lopes', 'Fernando Assunção de Souza']

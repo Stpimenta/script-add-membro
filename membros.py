@@ -4,7 +4,7 @@ from model.ModelMembro import membro
 from datetime import datetime
 from service.ServiceTratamento import ServiceTratamento
 
-caminho_arquivo = './Pasta1.xlsx'
+caminho_arquivo = './Pasta1.xlsxa'
 
 # Lê o arquivo Excel para um DataFrame do pandas sem cabeçalho
 df = pd.read_excel(caminho_arquivo, header=None, engine='openpyxl')
@@ -17,7 +17,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
 # Escolha dos índices das linhas para processar
-inicio = 50 - 1  
+inicio = 44 - 1  
 fim = 51
 
 # Inicializa vetores para armazenar nomes de usuários com sucesso e sem sucesso

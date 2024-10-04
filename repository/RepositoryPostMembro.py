@@ -4,8 +4,8 @@ import requests
 from model.ModelMembro import membro
 from service.ServiceSearchEndereco import viacep
 
-url = ""
-jwt_token = " "
+url = "http://192.168.1.199:5287/api/Usuario"
+jwt_token = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIwIiwiZXhwIjoxNzIxMTMwMDM5fQ.beuk5QmwWsQ-MxhUmJbXHS17sYVrYyj31KbfA35WXoo"
 
 def post_usuario(usuario: membro):
     headers = {
